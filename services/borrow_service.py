@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 
+
 def borrow_book(connection, record):
     try:
         cursor = connection.cursor()
@@ -21,7 +22,8 @@ def borrow_book(connection, record):
         return {"message": "Book borrowed successfully"}
     except Exception as e:
         connection.rollback()
-        raise HTTPException(status_code=500, detail=f"Error borrowing book: {e}")
+        raise HTTPException(
+            status_code=500, detail=f"Error borrowing book: {e}")
     finally:
         connection.close()
 
@@ -50,6 +52,7 @@ def return_book(connection, record_id):
         return {"message": "Book returned successfully"}
     except Exception as e:
         connection.rollback()
-        raise HTTPException(status_code=500, detail=f"Error returning book: {e}")
+        raise HTTPException(
+            status_code=500, detail=f"Error returning book: {e}")
     finally:
         connection.close()

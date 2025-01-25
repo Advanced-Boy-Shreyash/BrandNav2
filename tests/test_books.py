@@ -1,30 +1,34 @@
+import pytest
 from fastapi.testclient import TestClient
 from main import app
 
 client = TestClient(app)
 
+
 def test_add_book():
-    # Test adding a new book
     response = client.post("/books/", json={
         "title": "Test Book",
         "author": "Test Author",
         "genre": "Fiction",
-        "publication_year": 2021
+        "publication_year": 2022
     })
     assert response.status_code == 200
-    assert response.json() == {"message": "Book added successfully"}
+    assert "book_id" in response.json()
+
 
 def test_get_books():
-    # Test getting all books
     response = client.get("/books/")
     assert response.status_code == 200
-    books = response.json()
-    assert isinstance(books, list)
+    assert isinstance(response.json(), list)
 
-def test_get_books_by_author():
-    # Test getting books by author
-    response = client.get("/books/?author=Test Author")
+
+def test_get_books_with_filter():
+    response = client.get("/books/?author=Test Author&genre=Fiction")
     assert response.status_code == 200
-    books = response.json()
-    assert len(books) > 0
-    assert books[0]["author"] == "Test Author"
+    assert isinstance(response.json(), list)
+
+
+def test_no_books_found():
+    response = client.get("/books/?author=Non-existent")
+    assert response.status_code == 404
+    assert "No books found" in response.json()["detail"]

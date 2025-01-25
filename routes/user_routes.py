@@ -4,6 +4,7 @@ from database.models import User
 
 router = APIRouter()
 
+
 @router.post("/")
 def add_user(user: User):
     conn = get_db_connection()
@@ -14,6 +15,7 @@ def add_user(user: User):
     conn.close()
     return {"message": "User added successfully"}
 
+
 @router.get("/")
 def get_users():
     conn = get_db_connection()
@@ -21,6 +23,7 @@ def get_users():
     users = cursor.execute("SELECT * FROM users").fetchall()
     conn.close()
     return users
+
 
 @router.put("/{user_id}")
 def update_user(user_id: int, user: User):
@@ -33,6 +36,7 @@ def update_user(user_id: int, user: User):
         raise HTTPException(status_code=404, detail="User not found")
     conn.close()
     return {"message": "User updated successfully"}
+
 
 @router.delete("/{user_id}")
 def delete_user(user_id: int):

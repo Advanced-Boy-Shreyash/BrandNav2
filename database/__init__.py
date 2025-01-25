@@ -2,10 +2,12 @@ import sqlite3
 
 DATABASE_PATH = "library.db"
 
+
 def get_db_connection():
     conn = sqlite3.connect(DATABASE_PATH)
     conn.row_factory = sqlite3.Row
     return conn
+
 
 def create_tables():
     conn = get_db_connection()
@@ -48,6 +50,7 @@ def create_tables():
 
     conn.commit()
     conn.close()
+
 
 # Call create_tables when the application starts
 create_tables()

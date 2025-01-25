@@ -8,13 +8,15 @@ router = APIRouter()
 @router.post("/")
 def add_book(book: Book):
     if not book.title or not book.author:
-        raise HTTPException(status_code=400, detail="Title and author are required")
+        raise HTTPException(
+            status_code=400, detail="Title and author are required")
 
     conn = get_db_connection()
     cursor = conn.cursor()
 
     # Check for duplicate book by title and author
-    cursor.execute("SELECT * FROM books WHERE title = ? AND author = ?", (book.title, book.author))
+    cursor.execute(
+        "SELECT * FROM books WHERE title = ? AND author = ?", (book.title, book.author))
     existing_book = cursor.fetchone()
     if existing_book:
         raise HTTPException(status_code=400, detail="Book already exists")
@@ -33,7 +35,7 @@ def get_books(author: str = None, genre: str = None):
     cursor = conn.cursor()
     query = "SELECT * FROM books"
     params = []
-    
+
     if author or genre:
         query += " WHERE"
         if author:
@@ -42,12 +44,13 @@ def get_books(author: str = None, genre: str = None):
         if genre:
             query += (" AND" if author else "") + " genre = ?"
             params.append(genre)
-    
+
     books = cursor.execute(query, params).fetchall()
     conn.close()
 
     if not books:
-        raise HTTPException(status_code=404, detail="No books found matching the criteria")
+        raise HTTPException(
+            status_code=404, detail="No books found matching the criteria")
 
     return books
 
@@ -55,7 +58,8 @@ def get_books(author: str = None, genre: str = None):
 @router.put("/{book_id}")
 def update_book(book_id: int, book: Book):
     if not book.title or not book.author:
-        raise HTTPException(status_code=400, detail="Title and author are required to update")
+        raise HTTPException(
+            status_code=400, detail="Title and author are required to update")
 
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -71,7 +75,8 @@ def update_book(book_id: int, book: Book):
     conn.commit()
 
     if cursor.rowcount == 0:
-        raise HTTPException(status_code=404, detail="No changes made to the book")
+        raise HTTPException(
+            status_code=404, detail="No changes made to the book")
 
     conn.close()
     return {"message": "Book updated successfully"}
@@ -83,15 +88,17 @@ def delete_book(book_id: int):
     cursor = conn.cursor()
 
     # Check if the book is being borrowed
-    cursor.execute("SELECT * FROM borrow_records WHERE book_id = ? AND is_returned = 0", (book_id,))
+    cursor.execute(
+        "SELECT * FROM borrow_records WHERE book_id = ? AND is_returned = 0", (book_id,))
     if cursor.fetchone():
-        raise HTTPException(status_code=400, detail="Cannot delete the book because it is currently borrowed")
+        raise HTTPException(
+            status_code=400, detail="Cannot delete the book because it is currently borrowed")
 
     cursor.execute("DELETE FROM books WHERE id = ?", (book_id,))
     conn.commit()
 
     if cursor.rowcount == 0:
         raise HTTPException(status_code=404, detail="Book not found")
-    
+
     conn.close()
     return {"message": "Book deleted successfully"}

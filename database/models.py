@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 
+
 class Book(BaseModel):
     id: Optional[int]
     title: str
@@ -8,11 +9,13 @@ class Book(BaseModel):
     genre: str
     publication_year: int
 
+
 class User(BaseModel):
     id: Optional[int]
     name: str
     email: str
     phone_number: str
+
 
 class BorrowRecord(BaseModel):
     id: Optional[int]

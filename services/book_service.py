@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 
+
 def add_book_to_db(connection, book):
     try:
         cursor = connection.cursor()
@@ -11,7 +12,8 @@ def add_book_to_db(connection, book):
         return cursor.lastrowid
     except Exception as e:
         connection.rollback()
-        raise HTTPException(status_code=500, detail=f"Error adding book to database: {e}")
+        raise HTTPException(
+            status_code=500, detail=f"Error adding book to database: {e}")
     finally:
         connection.close()
 
@@ -33,10 +35,12 @@ def get_books_from_db(connection, author=None, genre=None):
         books = cursor.fetchall()
 
         if not books:
-            raise HTTPException(status_code=404, detail="No books found matching the criteria")
-        
+            raise HTTPException(
+                status_code=404, detail="No books found matching the criteria")
+
         return books
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error retrieving books: {e}")
+        raise HTTPException(
+            status_code=500, detail=f"Error retrieving books: {e}")
     finally:
         connection.close()
