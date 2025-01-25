@@ -7,9 +7,12 @@ client = TestClient(app)
 
 def test_borrow_book():
     response = client.post("/borrow/", json={
+        "id": 1,
+        "return_date": "2025-04-02",
         "book_id": 1,
         "user_id": 1,
-        "borrow_date": "2025-01-01"
+        "borrow_date": "2025-01-01",
+        "is_returned": "false"
     })
     assert response.status_code == 200
     assert "message" in response.json()

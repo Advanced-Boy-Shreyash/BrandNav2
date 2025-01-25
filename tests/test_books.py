@@ -7,6 +7,7 @@ client = TestClient(app)
 
 def test_add_book():
     response = client.post("/books/", json={
+        "id": 1,
         "title": "Test Book",
         "author": "Test Author",
         "genre": "Fiction",
