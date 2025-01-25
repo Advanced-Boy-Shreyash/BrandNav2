@@ -22,7 +22,7 @@ A backend API for managing books, users, and borrow records for a library manage
 ### 1. Clone the repository
 
     git clone https://github.com/Advanced-Boy-Shreyash/BrandNav2
-    cd BrandNav2
+    cd app
 
 ### 2. Run following commands
 
