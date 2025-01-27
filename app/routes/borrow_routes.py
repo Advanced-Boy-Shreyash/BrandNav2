@@ -5,6 +5,49 @@ from datetime import datetime
 
 router = APIRouter()
 
+@router.get("/")
+def get_all_borrowed_books(is_returned: bool = None):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Base query to fetch all borrowed books
+    query = """
+        SELECT br.id, br.book_id, br.user_id, br.borrow_date, br.return_date, br.is_returned,
+               b.title AS book_title, u.name AS user_name
+        FROM borrow_records br
+        JOIN books b ON br.book_id = b.id
+        JOIN users u ON br.user_id = u.id
+    """
+    
+    # Add a filter if `is_returned` is specified
+    if is_returned is not None:
+        query += " WHERE br.is_returned = ?"
+        cursor.execute(query, (int(is_returned),))
+    else:
+        cursor.execute(query)
+
+    records = cursor.fetchall()
+
+    if not records:
+        raise HTTPException(status_code=404, detail="No borrowed books found")
+
+    # Structure the response
+    borrowed_books = [
+        {
+            "record_id": record[0],
+            "book_id": record[1],
+            "user_id": record[2],
+            "borrow_date": record[3],
+            "return_date": record[4],
+            "is_returned": bool(record[5]),
+            "book_title": record[6],
+            "user_name": record[7],
+        }
+        for record in records
+    ]
+
+    conn.close()
+    return {"borrowed_books": borrowed_books}
 
 @router.post("/")
 def borrow_book(record: BorrowRecord):
